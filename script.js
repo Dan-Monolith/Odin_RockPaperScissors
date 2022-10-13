@@ -77,3 +77,5 @@ if (confirm("Wanna play Rock Paper Scissors?")) {
   } else {
     alert("Fine, do whatever you want!");
   }
+
+  //now to tidy up and make it look good.
