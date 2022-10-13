@@ -17,9 +17,6 @@ function rpsRound(getComputerSelection, getPlayerSelection) {
     function getPlayerChoice() {
         let playerInput = prompt("Rock, Paper or Scissors?");
     
-        //if (playerInput === undefined) {
-        //    alert("Don't be bitch, play game!");
-        //}
         playerInput = playerInput.toLowerCase();
         if (playerInput === "rock") {
             return ("rock");
