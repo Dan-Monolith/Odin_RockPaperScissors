@@ -1,116 +1,104 @@
-function rpsRound(getComputerSelection, PlayerSelection) {
-   
-    function getComputerChoice () {
-        randomNum = Math.floor(Math.random() * 9) + 1;
-        
-        return(randomNum >= 1 && randomNum <= 3) ? ("rock") :
-            (randomNum >= 4 && randomNum <= 6) ? ("paper") :
-            ("scissors");
+// Accessing the buttons and text labels
+const rockButton = document.getElementById("rock");
+const paperButton = document.querySelector("#paper");
+const scissorsButton = document.querySelector("#scissors");
+const playerScore = document.getElementById("player-score");
+const computerScore = document.getElementById("computer-score");
+const tieText = document.getElementById("result-tie");
+// Define constants to find errors in case of a typo
+const ROCK = "rock";
+const PAPER = "paper";
+const SCISSORS = "scissors";
+// Global variables to keep track of round results that I am not a fan of
+let computerWinAmount = 0;
+let playerWinAmount = 0;
+let tieAmount = 0;
+
+function clickListener(event) {
+    // Exit, if not a button was clicked
+    if (event.target.tagName !== "BUTTON") {
+       return;
     }
-    let computerSelection = getComputerChoice();
-    console.log(computerSelection);
-    
-    //function getPlayerChoice() {
-    //    let playerInput = prompt("Rock, Paper or Scissors?");
-    //    
-    //    //need to input a empty input catcher if player enters nothing and clicks OK
-    //    //or the players makes a typo, currently it just runs to the last case in rpsValue
+    const playerSelection = event.target.id;
+    const computerSelection = computerPlay();
+    playRound(playerSelection,computerSelection);
+ }
+ const buttonCont = document.querySelectorAll("#button-container");
+ buttonCont.forEach((button) => {
+    button.addEventListener('click', clickListener)
+ })
+//document.getElementById("#button-container").addEventListener("click", clickListener);
 
-    //    return (playerInput === "rock") ? ("rock") :
-    //        (playerInput === "paper") ? ("paper") :
-    //        (playerInput === "scissors") ? ("scissors") :
-    //        (playerInput === "") ? ("blank") :
-    //        alert("That's not Rock Paper Scissors!, You made a typo");  
-    //}
-    //let playerSelection = getPlayerChoice();
-    //console.log(playerSelection);
-   
+const signs = [ROCK, PAPER, SCISSORS];
 
-    let rpsValue = computerSelection.concat(playerSelection);
-
-    //maybe I can use backticks to improve readability and make code less verbose
-    switch (rpsValue) {
-        case "rockrock":
-            return (score = 0), alert("Draw");
-            break;
-        case "rockpaper":
-            return (score = 1), alert("You win! Paper beats rock");
-            break;
-        case "rockscissors":
-            return (score = -1), alert("You lose! Rock beats scissors");
-            break;
-        case "paperpaper":
-            return (score = 0), alert("Draw");
-            break;
-        case "paperscissors":
-            return (score = 1), alert("You win! Scissors beats paper");
-            break;
-        case "paperrock":
-            return (score = -1), alert("You lose! Paper beats rock");
-            break;
-        case "scissorsscissors":
-            return (score = 0), alert("Draw");
-            break;
-        case "scissorsrock":
-            return (score = 1), alert("You win! Rock beats scissors");
-            break;
-        case "scissorspaper":
-            return(score = -1), alert("You lose! Scissors beats paper");
-            break;
-        default :
-            alert("Are you OK?");        
-    }
-}
-let score;
-
-function game() {
-    let finalScore = 0;
-
-    for (let i = 0; i < 5; i++) {
-        rpsRound();
-        finalScore += score;
-    }
-
-    let message = (finalScore > 0) ? alert("You win the game! Good job old boy!"):
-        (finalScore < 0) ? alert("Sorry, you lost the match old bean") :
-        alert("Wow, it was a draw!");  
+function computerPlay() {
+    let choice = Math.floor(Math.random() * 3);
+    return signs[choice];
 }
 
-//if (confirm("Wanna play Rock Paper Scissors?")) {
-//    game();
-//  } else {
-//    alert("Fine, do whatever you want!");
-//  }
+// Group of functions to change text labels after rounds
+function playerWin() {
+    ++playerWinAmount;
+    playerScore.innerHTML = "Your score is: " + playerWinAmount;
+}
 
-const buttons = document.querySelectorAll ('button');
+function computerWin() {
+    ++computerWinAmount;
+    computerScore.innerHTML = "The computer score is: " + computerWinAmount;
+}
 
-buttons.forEach((button) => {
-    button.addEventListener('click', () => {
-        let playerSelection = button.id;
-        console.log(playerSelection);
-        rpsRound();
-    });
-});
+function tieWin() {
+    ++tieAmount;
+    tieText.innerHTML = "Tie rounds: " + tieAmount;
+}
 
-const bodyClass = document.querySelector('body');
+// Function that checks winning very inelegantly
+function playRound(playerSelection, computerSelection) {
+    if (playerSelection == ROCK &&
+    computerSelection == ROCK) {
+        tieWin();
+    } else if (playerSelection == ROCK &&
+    computerSelection == SCISSORS) {
+        playerWin();
+    } else if (playerSelection == ROCK &&
+    computerSelection == PAPER) {
+        computerWin();
+    }
 
-const playDiv = document.createElement('div');
-playDiv.classList.add('playDiv');
-bodyClass.appendChild(playDiv);
+    if (playerSelection == PAPER &&
+    computerSelection == ROCK) {
+        playerWin();
+    } else if (playerSelection == PAPER &&
+    computerSelection == PAPER) {
+        tieWin();
+    } else if (playerSelection == PAPER &&
+    computerSelection == SCISSORS) {
+        computerWin();
+    }
 
-const playButton = document.createElement('button',);
-playButton.classList.add('playButton');
-playButton.textContent = 'Play';
-playButton.style.marginTop = "10px";
-playDiv.appendChild(playButton); 
-playButton.onclick = () => game();
+    if(playerSelection == SCISSORS &&
+    computerSelection == ROCK) {
+        computerWin();
+    } else if (playerSelection == SCISSORS &&
+    computerSelection == PAPER) {
+        playerWin();
+    } else if (playerSelection == SCISSORS &&
+    computerSelection == SCISSORS) {
+        tieWin();
+    }
 
+    if(computerWinAmount == 5) {
+        alert("You lost! Better luck next time :(");
+        reset();
+    } else if (playerWinAmount == 5) {
+        alert("You won! Congratulations! :)")
+        reset();
+    }
+}
 
-
-
-
-
-
-
-
-    
+// Helper function to reset after game end
+function reset() {
+    playerScore.textContent = "Your score is: 0";
+    computerScore.textContent = "The computer score is: 0";
+    tieText.textContent = "Tie rounds: 0";
+}
